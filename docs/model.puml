@@ -1,0 +1,104 @@
+@startuml model
+
+package "Отношения" {
+  
+  class User<<Пользователь>>{
+    + code
+    + name
+  }
+  note top of User
+    Пользователь может быть
+    внутренним (LDAP) 
+    и внешним (publogin) 
+  end note
+
+  class Relation <<Отношение>>{
+    + uid
+    + code
+    + name
+  }
+
+  note top of Relation
+    Пример "Отношения" - сделка,
+    в которой есть различные участники:
+  end note
+  
+
+  class RelationMemberRole <<Роль>>{
+    + code
+    + name
+  }
+
+  RelationMember .. "1" RelationMemberRole
+
+  class RelationMember<<Участник отношения>> {
+    user: User
+    relation: Relation
+    role: RelationMemberRole <<Роль>>
+    begDate: DateTime
+    endDate: DateTime
+  }
+  note bottom of RelationMember
+    В сделке есть различные участники:
+    Клиент, Агент (сотрудник автосалона),
+    Менеджер банка и т.д.
+  end note
+
+  User "1" *-- "M" RelationMember : содержит >
+  Relation "1" *-- "M" RelationMember : содержит >
+
+}
+
+
+package "Контакты" {
+  class Session <<Сессия чата>>{
+    + uid
+    + begDate
+    + direction
+    + relation: Relation
+  }
+
+  class Event <<Событие>>{
+    + date
+    + author
+    + text
+    + attachments[]
+    + relationMember
+  }
+
+  note bottom of Event
+    Событие - это запись в чате с
+    текстом и опциональными вложениями
+    Вложения вкладываются в досье сделки
+  end note
+  Session "1" *-- "M" Event : содержит >
+
+}
+
+Relation "1" *-- "M" Session : по сделке может быть 1 и более чатов >
+
+
+package "Досье" {
+  class Dossier <<Досье чата>>{
+    + uid
+  }
+  note top of Dossier
+    Все полученные в чате файлы
+    Сохраняются в досье чата,
+    из которого они будут помещаться 
+    в кредитное досье для проверки
+  end note
+
+  class DossierFile <<Файл досье>>{
+    + date
+    + name
+    + content
+  }
+
+
+  Dossier "1" *-- "M" DossierFile : в досье может быть 1 и более файлов >
+
+}
+Session "1" -- "1" Dossier: чат содержит досье
+
+@enduml
