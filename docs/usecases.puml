@@ -1,0 +1,51 @@
+@startuml usecases
+
+:Пользователь:
+
+
+(Смотреть сообещения) as viewMessages
+note bottom of viewMessages
+  Пользователь видит список сообщений
+  участников с вложениями
+end note
+
+(Отправить сообещение) as sendMessage
+note bottom of sendMessage
+    Пользователь может отправлять 
+    сообщения с вложениями
+end note
+(Получать сообещения) as receiveMessages
+
+note bottom of receiveMessages
+    Сообщения других участников
+    полявляются в реальном времени
+end note
+(Смотреть вложения) as viewAttachments
+note bottom of viewAttachments
+    Пользователь может просмотреть
+    все вложения чата
+end note
+
+
+(Подписываться на сообытия) as subscribeEvents
+note bottom of subscribeEvents
+    Внешняя система может подписываться
+    на интересующие события,
+    например на сообщения с вложениями
+end note
+
+(Получать сообытия) as recieveEvents
+
+:Пользователь: 
+
+:Пользователь: -- viewMessages
+viewMessages --> sendMessage
+viewMessages --> receiveMessages
+viewMessages --> viewAttachments
+
+:Внешняя система:
+
+:Внешняя система: -- subscribeEvents
+subscribeEvents --> recieveEvents
+
+@enduml
