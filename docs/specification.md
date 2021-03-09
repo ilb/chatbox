@@ -19,3 +19,7 @@
 
 ## Модель предметной области
 
+## Дорожная карта
+
+1. Текстовый чат с вложениями, интегрируемый как api / iframe
+2. Аудио-видео чат с использованием [Janus](https://janus.conf.meetecho.com/docs/), пример приложения [jangouts](https://github.com/jangouts/jangouts)
