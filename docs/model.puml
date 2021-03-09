@@ -1,104 +1,63 @@
 @startuml model
 
-package "Отношения" {
-  
   class User<<Пользователь>>{
-    + code
-    + name
-  }
-  note top of User
-    Пользователь может быть
-    внутренним (LDAP) 
-    и внешним (publogin) 
-  end note
-
-  class Relation <<Отношение>>{
-    + uid
-    + code
+    # id
+    # code
     + name
   }
 
-  note top of Relation
-    Пример "Отношения" - сделка,
-    в которой есть различные участники:
-  end note
-  
-
-  class RelationMemberRole <<Роль>>{
-    + code
+  class Chat <<Чат>>{
+    # id
+    # uid
+    # code
     + name
-  }
-
-  RelationMember .. "1" RelationMemberRole
-
-  class RelationMember<<Участник отношения>> {
-    user: User
-    relation: Relation
-    role: RelationMemberRole <<Роль>>
-    begDate: DateTime
-    endDate: DateTime
-  }
-  note bottom of RelationMember
-    В сделке есть различные участники:
-    Клиент, Агент (сотрудник автосалона),
-    Менеджер банка и т.д.
-  end note
-
-  User "1" *-- "M" RelationMember : содержит >
-  Relation "1" *-- "M" RelationMember : содержит >
-
-}
-
-
-package "Контакты" {
-  class Session <<Сессия чата>>{
-    + uid
     + begDate
-    + direction
-    + relation: Relation
+    + endDate
   }
 
-  class Event <<Событие>>{
+  class ChatMemberRole <<Роль участника>>{
+    # id
+    + code
+    + name
+  }
+
+  ChatMember .. "1" ChatMemberRole
+
+  class ChatMember<<Участник чата>> {
+    # id
+    + user: User
+    + chat: Chat
+    + role: ChatMemberRole <<Роль>>
+    + begDate: DateTime
+    + endDate: DateTime
+  }
+
+  User "1" *-- "M" ChatMember : является >
+  Chat "1" *-- "M" ChatMember : содержит >
+
+
+  class Message <<Сообщение>>{
+    # id
     + date
-    + author
+    + author: User
     + text
     + attachments[]
-    + relationMember
+    + chatMember
   }
 
-  note bottom of Event
-    Событие - это запись в чате с
-    текстом и опциональными вложениями
-    Вложения вкладываются в досье сделки
-  end note
-  Session "1" *-- "M" Event : содержит >
-
-}
-
-Relation "1" *-- "M" Session : по сделке может быть 1 и более чатов >
-
-
-package "Досье" {
-  class Dossier <<Досье чата>>{
-    + uid
-  }
-  note top of Dossier
-    Все полученные в чате файлы
-    Сохраняются в досье чата,
-    из которого они будут помещаться 
-    в кредитное досье для проверки
-  end note
-
-  class DossierFile <<Файл досье>>{
+  class Attachment <<Вложение>>{
+    # id
     + date
     + name
+    + contentType
     + content
   }
 
+  Message "1" *-- "M" Attachment : содержит >
 
-  Dossier "1" *-- "M" DossierFile : в досье может быть 1 и более файлов >
 
-}
-Session "1" -- "1" Dossier: чат содержит досье
+  Chat "1" *-- "M" Message : содержит >
+
+
 
 @enduml
